@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RunnerCoach implements Coach {
 
-    RunnerCoach(){
+    public RunnerCoach(){
         System.out.println("In constructor: " + getClass().getSimpleName());
     }
 
