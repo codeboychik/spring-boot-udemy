@@ -12,15 +12,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConstructorController {
 
     private Coach coach;
+    private Coach secondaryCoach;
 
     @Autowired
-    public ConstructorController(@Qualifier("boxCoach") Coach coach) {
+    public ConstructorController(
+            @Qualifier("boxCoach") Coach coach,
+            @Qualifier("boxCoach") Coach secondaryCoach
+    ) {
         this.coach = coach;
+        this.secondaryCoach = secondaryCoach;
     }
 
     @GetMapping("/get-training")
     public String getTraining() {
         return this.coach.getDailyWorkout();
+    }
+
+    @GetMapping("/check")
+    public Boolean check() {
+        return this.coach == secondaryCoach;
     }
 
 }

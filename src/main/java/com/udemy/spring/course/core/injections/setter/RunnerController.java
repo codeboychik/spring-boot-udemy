@@ -13,7 +13,6 @@ public class RunnerController {
 
     private Coach coach;
 
-
     @Autowired
     public void setCoach(/* Primary is box coach */ Coach coach) {
         this.coach = coach;
