@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.udemy.spring.course</groupId>
-	<artifactId>code-practice</artifactId>
+	<artifactId>userapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>core</name>
 	<description>core</description>
@@ -52,6 +52,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>eu.lundegaard.test.task.userapi.UserApplication</mainClass>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
