@@ -21,8 +21,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService {
 
-    UserRepository userRepository;
-    AddressRepository addressRepository;
+    private UserRepository userRepository;
+    private AddressRepository addressRepository;
 
     public List<User> getUsers() {
         return userRepository.findAll();

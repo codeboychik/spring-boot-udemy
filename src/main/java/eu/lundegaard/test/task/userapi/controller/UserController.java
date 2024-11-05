@@ -3,6 +3,7 @@ package eu.lundegaard.test.task.userapi.controller;
 import eu.lundegaard.test.task.userapi.entity.Address;
 import eu.lundegaard.test.task.userapi.entity.User;
 import eu.lundegaard.test.task.userapi.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +21,11 @@ import java.util.List;
     
 @RestController
 @RequestMapping(value = "/api/users")
+@AllArgsConstructor
 public class UserController {
 
-    UserService userService;
+    private UserService userService;
 
-    UserController(UserService userService) {
-        this.userService = userService;
-    };
 
     @GetMapping("")
     public ResponseEntity<List<User>> getUsers() {

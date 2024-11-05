@@ -8,19 +8,21 @@ import eu.lundegaard.test.task.userapi.exception.GlobalExceptionHandler;
 import eu.lundegaard.test.task.userapi.repository.AddressRepository;
 import eu.lundegaard.test.task.userapi.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -33,6 +35,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(UserApplication.class)
 public class UserApiTests {
 
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("postgres")
+            .withUsername("pg")
+            .withPassword("test")
+            .withInitScript("db-schema.sql");
+
+    @BeforeAll
+    static void setUp() {
+        postgres.start();
+    }
+
+    @DynamicPropertySource
+    static void configureDataSource(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
+        registry.add("spring.jpa.properties.hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQLDialect");
+    }
+
     @TestConfiguration
     static class Config {
         @Bean
@@ -44,9 +66,6 @@ public class UserApiTests {
             return new ObjectMapper();
         }
     }
-
-    /*@Value("${spring.profiles.active}")
-    private String activeProfile;*/
 
     @Autowired
     AddressRepository addressRepository;
