@@ -1,12 +1,10 @@
 package eu.lundegaard.test.task.userapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * File is created by andreychernenko at 02.11.2024
@@ -17,7 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Entity
+@Builder
 @Table(name = "address")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Address {
 
     @Id

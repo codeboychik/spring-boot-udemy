@@ -1,7 +1,17 @@
-FROM eclipse-temurin:21
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
-ARG JAR_FILE=./target/*.jar
+WORKDIR /opt/userapi
 
-COPY ${JAR_FILE} ./opt/userapi.jar
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-ENTRYPOINT ["java", "-jar", "/opt/userapi.jar"]
+COPY src ./src
+RUN mvn clean package -Dspring.profiles.active=docker
+
+FROM eclipse-temurin:21-jre
+
+WORKDIR /opt/userapi
+
+COPY --from=build /opt/userapi/target/*.jar userapi.jar
+
+ENTRYPOINT ["java", "-jar", "userapi.jar"]

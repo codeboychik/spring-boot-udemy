@@ -9,12 +9,28 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler({NoSuchElementException.class, UserNotFoundException.class, AddressNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorMessage handleNotFoundExceptions(Exception ex) {
+        String message = switch (ex) {
+            case NoSuchElementException ignored -> "No such element";
+            case UserNotFoundException ignored -> "No such user";
+            case AddressNotFoundException ignored -> "No such address";
+            case null, default -> "Resource not found";
+        };
+
+        return ErrorMessage.builder()
+                .message(message)
+                .error(ex.getMessage())
+                .build();
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -24,19 +40,19 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
-        return new ErrorMessage("Validation error", errors);
+        return ErrorMessage.builder()
+                .message("Validation error")
+                .errors(errors)
+                .build();
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage handleConstrainViolationExceptions(ConstraintViolationException ex) {
         var errors = ex.getConstraintViolations();
-        return new ErrorMessage("Validation error", errors.stream().map(ConstraintViolation::getMessage).toList());
-    }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorMessage handleNotFoundException(NoSuchElementException ex) {
-        return new ErrorMessage("No such element", Collections.singletonList(ex.getMessage()));
+        return ErrorMessage.builder()
+                .message("Validation error")
+                .errors(errors.stream().map(ConstraintViolation::getMessage).toList())
+                .build();
     }
 }

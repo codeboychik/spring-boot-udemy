@@ -1,7 +1,7 @@
 package eu.lundegaard.test.task.userapi.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,10 +14,15 @@ import java.util.List;
 
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorMessage {
 
     String message;
+    String error;
     List<String> errors;
 
 }
